@@ -36,20 +36,25 @@ Item {
             ? plasmoid.configuration.engineerSound
             : Qt.resolvedUrl("../sounds/engineer.wav")
 
+    // 🖼️ IMAGE
     AnimatedImage {
         id: display
         anchors.fill: parent
         fillMode: Image.PreserveAspectFit
         playing: true
+        speed: 1.0
         source: Qt.resolvedUrl("../images/miku.png")
     }
 
-    SoundEffect {
-        id: sound
+    // 🔊 Qt5-CORRECT AUDIO
+    MediaPlayer {
+        id: player
+        volume: masterVolume
     }
 
     function resetToIdle() {
         root.isPlaying = false
+        display.speed = 1.0
         display.source = Qt.resolvedUrl("../images/miku.png")
         display.playing = true
     }
@@ -60,8 +65,11 @@ Item {
             if (root.isPlaying)
                 return
 
+            console.log("CLICKED 🔥")
             root.isPlaying = true
-            sound.stop()
+
+            player.stop()
+            player.source = ""
 
             display.playing = false
             display.source = ""
@@ -70,26 +78,27 @@ Item {
                 // 💙 MIKU MODE
                 display.speed = 4.0
                 display.source = Qt.resolvedUrl("../images/4051639.gif")
-                sound.volume = masterVolume * mikuVolume
-                sound.source = mikuSound
+                player.volume = masterVolume * mikuVolume
+                player.source = mikuSound
             } else {
                 // 🧰 ENGINEER MODE
                 display.speed = 1.0
                 display.source = Qt.resolvedUrl("../images/engineer-tf2.gif")
-                sound.volume = masterVolume * engineerVolume
-                sound.source = engineerSound
+                player.volume = masterVolume * engineerVolume
+                player.source = engineerSound
             }
 
             display.playing = true
-            sound.play()
+            player.play()
         }
     }
 
     Connections {
-        target: sound
-        function onPlayingChanged() {
-            if (!sound.playing && root.isPlaying)
+        target: player
+        function onPlaybackStateChanged() {
+            if (player.playbackState === MediaPlayer.StoppedState && root.isPlaying) {
                 resetToIdle()
+            }
         }
     }
 
@@ -99,4 +108,3 @@ Item {
         console.log("Engineer sound:", engineerSound)
     }
 }
-
