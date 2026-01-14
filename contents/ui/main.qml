@@ -31,8 +31,11 @@ PlasmoidItem {
         source: Qt.resolvedUrl("../images/miku.png")
     }
 
-    SoundEffect {
+    MediaPlayer {
         id: sound
+        audioOutput: AudioOutput {
+            id: audioOutput
+        }
     }
 
     function resetToIdle() {
@@ -55,13 +58,13 @@ PlasmoidItem {
                     // 💙 IM THINKING MIKU MIKU OO EE OOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
                     display.speed = 4.0
                     display.source = Qt.resolvedUrl("../images/4051639.gif")
-                    sound.volume = masterVolume * mikuVolume
+                    audioOutput.volume = masterVolume * mikuVolume
                     sound.source = mikuSound
                 } else {
                     // 🧰 ENGINEER MODE
                     display.speed = 1.0
                     display.source = Qt.resolvedUrl("../images/engineer-tf2.gif")
-                    sound.volume = masterVolume * engineerVolume
+                    audioOutput.volume = masterVolume * engineerVolume
                     sound.source = engineerSound
                 }
 
